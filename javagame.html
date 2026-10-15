@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Whack-a-Mole</title>
+
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px;
+    }
+
+    .hole {
+      width: 100px;
+      height: 100px;
+      background: brown;
+      border-radius: 50%;
+      font-size: 60px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Whack-a-Mole</h1>
+
+  <h2>Score: <span id="score">0</span></h2>
+  <h2>Misses: <span id="misses">0</span></h2>
+  <h2>Time: <span id="time">30</span></h2>
+
+  <div class="board">
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+  </div>
+
+  <button id="start">Start Game</button>
+  <h2 id="message"></h2>
+
+  <script>
+    const holes = document.querySelectorAll(".hole");
+
+    let score = 0;
+    let misses = 0;
+    let time = 30;
+    let current = -1;
+    let hit = false;
+    let moleTimer;
+    let gameTimer;
+
+    document.getElementById("start").addEventListener("click", startGame);
+
+    function showMole() {
+      // Count a miss if previous mole was not clicked
+      if (current !== -1 && !hit) {
+        misses++;
+        document.getElementById("misses").textContent = misses;
+      }
+
+      // Remove previous mole
+      holes.forEach(hole => hole.textContent = "");
+
+      // Choose random hole
+      current = Math.floor(Math.random() * 9);
+      holes[current].textContent = "🐹";
+      hit = false;
+    }
+
+    // Add click listener to every hole
+    holes.forEach((hole, index) => {
+      hole.addEventListener("click", function() {
+        if (index === current && !hit) {
+          score++;
+          document.getElementById("score").textContent = score;
+
+          hit = true;
+          hole.textContent = "";
+        }
+      });
+    });
+
+    function startGame() {
+      clearInterval(moleTimer);
+      clearInterval(gameTimer);
+
+      score = 0;
+      misses = 0;
+      time = 30;
+      current = -1;
+      hit = false;
+
+      document.getElementById("score").textContent = score;
+      document.getElementById("misses").textContent = misses;
+      document.getElementById("time").textContent = time;
+      document.getElementById("message").textContent = "";
+
+      holes.forEach(hole => hole.textContent = "");
+
+      showMole();
+
+      // New mole every second
+      moleTimer = setInterval(showMole, 1000);
+
+      // Countdown timer
+      gameTimer = setInterval(function() {
+        time--;
+        document.getElementById("time").textContent = time;
+
+        if (time === 0) {
+          clearInterval(moleTimer);
+          clearInterval(gameTimer);
+
+          if (!hit) {
+            misses++;
+            document.getElementById("misses").textContent = misses;
+          }
+
+          current = -1;
+          holes.forEach(hole => hole.textContent = "");
+
+          document.getElementById("message").textContent =
+            "Game Over! Final Score: " + score;
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
