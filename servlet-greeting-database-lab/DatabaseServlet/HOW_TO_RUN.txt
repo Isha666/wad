@@ -1,0 +1,51 @@
+STUDENT DATABASE SERVLET — TOMCAT 9 + MYSQL
+
+Prerequisites: JDK, Tomcat 9, MySQL server, MySQL Connector/J JAR.
+No Maven or Eclipse. Uses javax.servlet, not jakarta.servlet.
+
+1. Create MySQL database and sample records:
+   mysql -u root -p -h 127.0.0.1
+   CREATE DATABASE IF NOT EXISTS student;
+   USE student;
+   CREATE TABLE IF NOT EXISTS student (name VARCHAR(100));
+   INSERT INTO student VALUES ('Rahul'), ('Priya'), ('Arun');
+   exit;
+
+2. Edit WEB-INF/classes/DatabaseServlet.java:
+   Replace YOUR_PASSWORD with your actual MySQL password.
+   Replace root if your MySQL username differs.
+   The JDBC URL uses the database named student.
+
+3. Set CATALINA_HOME to the installed Tomcat 9 directory:
+   export CATALINA_HOME="$HOME/apache-tomcat-9.0.xx"
+   (Replace with your actual path.)
+
+4. Copy DatabaseServlet into Tomcat webapps (run from the ZIP extraction folder):
+   cp -r DatabaseServlet "$CATALINA_HOME/webapps/"
+
+5. Copy MySQL Connector/J JAR to WEB-INF/lib:
+   mkdir -p "$CATALINA_HOME/webapps/DatabaseServlet/WEB-INF/lib"
+   cp ~/Downloads/mysql-connector-j-*.jar "$CATALINA_HOME/webapps/DatabaseServlet/WEB-INF/lib/"
+   (Adjust source path if needed. The JAR is not included in this ZIP.)
+
+6. Compile:
+   cd "$CATALINA_HOME/webapps/DatabaseServlet/WEB-INF/classes"
+   javac -cp "$CATALINA_HOME/lib/servlet-api.jar" DatabaseServlet.java
+
+7. Start Tomcat (if not already running):
+   "$CATALINA_HOME/bin/startup.sh"
+
+8. Visit http://localhost:8080/DatabaseServlet/
+   Rahul -> Found; UnknownName -> Not found.
+
+9. Stop Tomcat when finished:
+   "$CATALINA_HOME/bin/shutdown.sh"
+
+Important mappings:
+  action="hello" -> web.xml /hello
+  method="post" -> doPost()
+  name="uname" -> request.getParameter("uname")
+  PreparedStatement ? -> stmt.setString(1, uname)
+
+Tomcat 10+ uses jakarta.servlet and is not compatible with this exact code.
+If port 8080 is occupied or changed, use your Tomcat port in the browser URL.

@@ -1,0 +1,32 @@
+GREETING SERVLET (Welcome Name) — TOMCAT 9 / javax.servlet
+
+Prerequisites: JDK (javac), Apache Tomcat 9. No Maven or Eclipse.
+
+1. Set CATALINA_HOME to your Tomcat 9 installation, e.g.:
+   export CATALINA_HOME="$HOME/apache-tomcat-9.0.xx"
+   (Replace with the actual directory. Check: echo "$CATALINA_HOME")
+
+2. Copy the GreetingServlet folder into Tomcat's webapps:
+   cp -r GreetingServlet "$CATALINA_HOME/webapps/"
+   (Run this from the directory containing GreetingServlet.)
+
+3. Compile:
+   cd "$CATALINA_HOME/webapps/GreetingServlet/WEB-INF/classes"
+   javac -cp "$CATALINA_HOME/lib/servlet-api.jar" HelloServlet.java
+
+4. Start Tomcat:
+   "$CATALINA_HOME/bin/startup.sh"
+
+5. Visit: http://localhost:8080/GreetingServlet/
+   Enter Rahul -> Welcome Rahul!
+
+6. Stop Tomcat when finished:
+   "$CATALINA_HOME/bin/shutdown.sh"
+
+Important mappings:
+  form action="hello" -> web.xml /hello
+  form method="post" -> servlet doPost()
+  input name="name" -> request.getParameter("name")
+
+If Tomcat is already running, restart or reload the application after changing servlet classes.
+If your Tomcat port differs, use that port in the browser URL.
